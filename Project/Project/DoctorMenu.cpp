@@ -30,7 +30,7 @@ void sortByTimeSlot(Appointment* arr, int size) {
     }
 }
 
-// helper — checks if two char arrays are equal
+// checks if two arrays equal
 bool strEqual(const char* a, const char* b) {
     int i = 0;
     while (a[i] != '\0' && b[i] != '\0') {
@@ -47,7 +47,6 @@ void viewTodaysAppointments(Doctor& d,
     char today[11];
     Validator::getTodayDate(today);
 
-    // collect today's appointments for this doctor
     Appointment todayApps[100];
     int count = 0;
 
@@ -71,7 +70,6 @@ void viewTodaysAppointments(Doctor& d,
     // sort by time slot ascending
     sortByTimeSlot(todayApps, count);
 
-    // display
     for (int i = 0; i < count; i++) {
         Patient* pat = patients.findbyID(todayApps[i].getpatientID());
         cout << "Appointment ID: " << todayApps[i].getID()
@@ -137,9 +135,6 @@ void markComplete(Doctor& d,
     cout << "Appointment marked as completed." << endl;
 }
 
-// ─────────────────────────────────────────
-// 3. MARK APPOINTMENT NO-SHOW
-// ─────────────────────────────────────────
 void markNoShow(Doctor& d,
     Storage<Appointment>& appointments,
     Storage<Bill>& bills) {
@@ -192,9 +187,7 @@ void markNoShow(Doctor& d,
     // update appointment to noshow
     target->setStatus("noshow");
     FileHandler::updateAppointment(*target);
-
-    // update corresponding bill to cancelled
-    // NO refund for noshow
+   
     for (int i = 0; i < bills.size(); i++) {
         Bill& b = bills.getALL()[i];
         if (b.getappID() == appID) {
@@ -215,7 +208,7 @@ void writePrescription(Doctor& d,
     cout << "Enter Appointment ID: ";
     cin >> appID;
 
-    // validate — must belong to this doctor and be completed
+    // validate: must belong to this doctor & is complete
     Appointment* target = nullptr;
     for (int i = 0; i < appointments.size(); i++) {
         Appointment& a = appointments.getALL()[i];
@@ -232,7 +225,7 @@ void writePrescription(Doctor& d,
         return;
     }
 
-    // check prescription doesnt already exist for this appointment
+    // prescription doesnt already exist
     for (int i = 0; i < prescriptions.size(); i++) {
         if (prescriptions.getALL()[i].getAppointmentID() == appID) {
             cout << "Prescription already written "
@@ -241,7 +234,7 @@ void writePrescription(Doctor& d,
         }
     }
 
-    // read medicines (max 499 chars, truncate silently)
+    // read medicines 
     char medicines[500];
     cout << "Enter medicines "
         << "(format: MedicineName Dosage; "
@@ -249,7 +242,6 @@ void writePrescription(Doctor& d,
     cin.ignore();   // clear buffer before getline
     cin.getline(medicines, 500);
 
-    // read notes (max 299 chars, truncate silently)
     char notes[300];
     cout << "Enter notes (max 300 chars): ";
     cin.getline(notes, 300);
@@ -265,8 +257,7 @@ void writePrescription(Doctor& d,
     // get today's date for prescription
     char today[11];
     Validator::getTodayDate(today);
-
-    // create prescription
+   
     Prescription newPres(newPresID,
         target->getpatientID(),
         appID,
@@ -299,8 +290,6 @@ void viewPatientHistory(Doctor& d,
         return;
     }
 
-    // validate patient has at least one completed
-    // appointment with THIS doctor
     bool hasCompleted = false;
     for (int i = 0; i < appointments.size(); i++) {
         Appointment& a = appointments.getALL()[i];
@@ -318,7 +307,7 @@ void viewPatientHistory(Doctor& d,
         return;
     }
 
-    // collect prescriptions written by THIS doctor for this patient
+    // collect prescriptions
     Prescription patPres[100];
     int count = 0;
 
@@ -347,7 +336,6 @@ void viewPatientHistory(Doctor& d,
         }
     }
 
-    // display
     for (int i = 0; i < count; i++) {
         cout << patPres[i] << endl;
     }
