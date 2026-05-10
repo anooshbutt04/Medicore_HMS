@@ -1,0 +1,3 @@
+1, Ayesha Khan,Cardiology,03211112222,docpass1,2000.00
+2, Bilal Raza,Neurology,03333334444,docpass2,2500.00
+5,Amna,Child Specialist,03280966324,amna1234,2000.00
