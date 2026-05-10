@@ -1,33 +1,33 @@
 # Medicore_HMS
-OVERVIEW
+**OVERVIEW**
 Medicore is a completely functional Hospital Management System built with C++ and designed with SFML Graphical Interface. The console serves as my Final Term Project for OOP course.The console supports three roles- Patient, Doctor and Admin, namely and manages bills, appointments, prescriptions, records, and security etc. All data that is required for basic information and initial record is shared across the program via a .txt file. 
 
 ______________________________________________________________________________
 
-FEATURES
-Role              Capabilities
+**FEATURES**
+**Role **            ** Capabilities**
 Patient:        Book/Cancel Appointments, Pay Bills, View Medical Record, 
                       View Top-Up Balance.
 
-Doctor:        View Appointments, Mark Appointments as Complete, View
+**Doctor:**        View Appointments, Mark Appointments as Complete, View
                      Patients’ Records, Write Prescription
 
-Admin:        Add/Remove Doctors, Discharge Patient(s), View All Data,
+**Admin:**        Add/Remove Doctors, Discharge Patient(s), View All Data,
                      Generate Daily Report,View Security Log
 
-After three (3) failed login attempts, the account is locked and update is logged into
-security_log.txt file. 
+_After three (3) failed login attempts, the account is locked and update is logged into
+security_log.txt file. _
 
 ______________________________________________________________________________
 
-DEPENDENCIES
+DEPENDENCIE**S**
 
 C++
 SFML 2.5+ 
 -For Windows, download from ( https://www.sfml-dev.org/download.php )
 ________________________________________________________________________
 
-How to Compile & Run
+**How to Compile & Run**
 Visual Studio (Windows) — Recommended
 Create a new Empty C++ Project.
 Add all .h and .cpp files to the project.
