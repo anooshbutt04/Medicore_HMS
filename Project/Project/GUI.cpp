@@ -1,12 +1,4 @@
-﻿// GUI.cpp  ——  fixes applied:
-//  1. showMenuScreen: dynamically shrinks buttons when options don't fit,
-//     so the Logout button is never clipped.
-//  2. All three role menus: validation errors inside a multi-step flow now
-//     re-prompt only the failed step instead of dumping back to the main menu.
-//  3. Date validation gives a proper message: "Invalid date format" vs
-//     "Date must be 2026 or later".
-
-#include "GUI.h"
+﻿#include "GUI.h"
 #include "Patient.h"
 #include "Doctor.h"
 #include "Admin.h"
@@ -36,7 +28,7 @@ static const sf::Color COL_SUCCESS(61, 139, 139);
 static const int WIN_W = 900;
 static const int WIN_H = 640;
 
-// ── helper: int to string ─────────────────────────────────────
+// ── helper
 static std::string iToS(int n) {
     if (n == 0) return "0";
     std::string s = "";
@@ -55,9 +47,7 @@ static std::string fToS(float f) {
     return iToS(whole) + "." + d;
 }
 
-// ─────────────────────────────────────────────────────────────
-// BUTTON
-// ─────────────────────────────────────────────────────────────
+//button
 Button::Button() { m_normalColor = COL_TEAL; m_hoverColor = COL_DARKTEAL; }
 
 void Button::setup(sf::Vector2f pos, sf::Vector2f size,
@@ -109,9 +99,7 @@ bool Button::isClicked(sf::RenderWindow& w, sf::Event& e) {
         isHovered(w);
 }
 
-// ─────────────────────────────────────────────────────────────
-// INPUT FIELD
-// ─────────────────────────────────────────────────────────────
+//asking for input
 InputField::InputField() : m_isPassword(false) {}
 
 void InputField::setup(sf::Vector2f pos, sf::Vector2f size,
@@ -154,9 +142,7 @@ bool InputField::containsPoint(float x, float y) {
     return m_box.getGlobalBounds().contains(x, y);
 }
 
-// ─────────────────────────────────────────────────────────────
-// SCROLLABLE LIST
-// ─────────────────────────────────────────────────────────────
+
 ScrollableList::ScrollableList() : m_font(nullptr),
 m_scrollOffset(0), m_visibleLines(0) {
 }
@@ -200,7 +186,6 @@ void ScrollableList::draw(sf::RenderWindow& w) {
             m_pos.y + (i - m_scrollOffset) * 22 + 4);
         w.draw(t);
     }
-    // scroll hint
     if ((int)m_lines.size() > m_visibleLines) {
         sf::Text hint;
         hint.setFont(*m_font);
@@ -212,9 +197,6 @@ void ScrollableList::draw(sf::RenderWindow& w) {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-// GUI — init
-// ─────────────────────────────────────────────────────────────
 GUI::GUI()
     : m_window(sf::VideoMode(WIN_W, WIN_H),
         "MediCore HMS",
@@ -262,35 +244,25 @@ void GUI::drawHeader(const std::string& title) {
     t.setCharacterSize(24); t.setFillColor(COL_BEIGE);
     t.setPosition(20, 17); m_window.draw(t);
 }
-
-// ─────────────────────────────────────────────────────────────
-// FIX 1: SHOW MENU SCREEN
-// Dynamically calculates button height + gap so ALL buttons fit
-// inside the window, no matter how many options there are.
-// The old hardcoded btnH=46 / gap=10 clipped the 10th button
-// (Logout on the Admin menu) because 120 + 9*56 = 624 > WIN_H-16.
-// ─────────────────────────────────────────────────────────────
+//menu
 int GUI::showMenuScreen(const std::string& title,
     const std::string& subtitle,
     const std::vector<std::string>& options) {
 
-    // --- layout calculation ---
     const float startY = 80.f;   // first button top-Y
     const float bottomY = (float)WIN_H - 10.f; // last pixel we can use
     const float available = bottomY - startY;
     const int   n = (int)options.size();
 
-    // Desired sizes; shrink proportionally if they don't fit
     float btnH = 46.f;
     float gap = 10.f;
 
     float needed = n * btnH + (n - 1) * gap;
     if (needed > available) {
-        // scale down uniformly
         float scale = available / needed;
         btnH *= scale;
         gap *= scale;
-        if (btnH < 28.f) btnH = 28.f; // hard minimum for readability
+        if (btnH < 28.f) btnH = 28.f; 
     }
 
     float btnW = 580.f;
@@ -301,7 +273,7 @@ int GUI::showMenuScreen(const std::string& title,
         sf::Color c = (options[i] == "Logout" || options[i] == "Back")
             ? sf::Color(160, 90, 90)
             : COL_TEAL;
-        // clamp font size so it fits the (possibly smaller) button
+        
         unsigned int fs = (unsigned int)(btnH * 0.38f);
         if (fs < 11) fs = 11;
         if (fs > 17) fs = 17;
@@ -313,7 +285,6 @@ int GUI::showMenuScreen(const std::string& title,
             m_fontRegular, c, COL_BEIGE, fs);
     }
 
-    // sidebar info
     sf::Text sideText;
     sideText.setFont(m_fontBold);
     sideText.setString("MediCore");
@@ -352,9 +323,6 @@ int GUI::showMenuScreen(const std::string& title,
     return -1;
 }
 
-// ─────────────────────────────────────────────────────────────
-// SHOW RESULTS SCREEN — scrollable output
-// ─────────────────────────────────────────────────────────────
 void GUI::showResultsScreen(const std::string& title,
     const std::vector<std::string>& lines) {
     ScrollableList list;
@@ -389,9 +357,6 @@ void GUI::showResultsScreen(const std::string& title,
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-// PROMPT INPUT — popup text input box
-// ─────────────────────────────────────────────────────────────
 std::string GUI::promptInput(const std::string& question,
     bool isPassword) {
     InputField field;
@@ -468,10 +433,6 @@ float GUI::promptFloat(const std::string& question) {
     }
     return result;
 }
-
-// ─────────────────────────────────────────────────────────────
-// SHOW MESSAGE
-// ─────────────────────────────────────────────────────────────
 void GUI::showMessage(const std::string& msg) {
     Button btnOK;
     btnOK.setup({ 340,370 }, { 220,46 },
@@ -499,9 +460,6 @@ void GUI::showMessage(const std::string& msg) {
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-// HOMEPAGE
-// ─────────────────────────────────────────────────────────────
 LoginResult GUI::runHomepage() {
     if (m_bgMusic.getDuration().asSeconds() > 0) m_bgMusic.play();
 
@@ -596,9 +554,6 @@ LoginResult GUI::runHomepage() {
     return LoginResult::Quit;
 }
 
-// ─────────────────────────────────────────────────────────────
-// LOGIN SCREEN
-// ─────────────────────────────────────────────────────────────
 bool GUI::runLoginScreen(const std::string& role,
     int& outID, std::string& outPwd,
     const std::string& errorMsg) {
@@ -686,12 +641,6 @@ bool GUI::runLoginScreen(const std::string& role,
     return false;
 }
 
-// ─────────────────────────────────────────────────────────────
-// FIX 2 + FIX 3: PATIENT MENU GUI
-// Each multi-step flow now uses inner loops so a validation error
-// re-prompts only that specific step (not the whole menu).
-// Date messages distinguish format errors from value errors.
-// ─────────────────────────────────────────────────────────────
 void GUI::runPatientMenuGUI(Patient& p,
     Storage<Doctor>& doctors,
     Storage<Appointment>& appointments,
@@ -719,7 +668,7 @@ void GUI::runPatientMenuGUI(Patient& p,
 
         // ── Book Appointment ─────────────────────────────────
         if (choice == 0) {
-            // Step 1: specialization
+           
             std::string spec = promptInput("Enter specialization (e.g. Cardiology):");
             if (spec.empty()) continue; // Cancel → back to patient menu
 
@@ -738,8 +687,7 @@ void GUI::runPatientMenuGUI(Patient& p,
                 continue;
             }
             showResultsScreen("Available Doctors", docLines);
-
-            // Step 2: doctor ID (loop until valid or cancelled)
+            
             Doctor* doc = nullptr;
             while (m_window.isOpen()) {
                 int docID = promptInt("Enter Doctor ID:");
@@ -768,7 +716,6 @@ void GUI::runPatientMenuGUI(Patient& p,
             }
             if (date.empty()) continue;
 
-            // show available slots
             const char* allSlots[8] = {
                 "09:00","10:00","11:00","12:00",
                 "13:00","14:00","15:00","16:00"
@@ -797,7 +744,6 @@ void GUI::runPatientMenuGUI(Patient& p,
             }
             showResultsScreen("Available Slots on " + date, slotLines);
 
-            // Step 4: time slot (loop until valid or cancelled)
             std::string slot;
             while (m_window.isOpen()) {
                 slot = promptInput("Enter time slot (e.g. 09:00):");
@@ -832,7 +778,6 @@ void GUI::runPatientMenuGUI(Patient& p,
                 continue;
             }
 
-            // create appointment + bill
             int newAppID = 1;
             for (int i = 0; i < appointments.size(); i++)
                 if (appointments.getALL()[i].getID() >= newAppID)
@@ -863,7 +808,7 @@ void GUI::runPatientMenuGUI(Patient& p,
                 "\nBalance: PKR " + fToS(p.getBalance()));
         }
 
-        // ── Cancel Appointment ───────────────────────────────
+        //cancle
         else if (choice == 1) {
             std::vector<std::string> lines;
             for (int i = 0; i < appointments.size(); i++) {
@@ -915,8 +860,6 @@ void GUI::runPatientMenuGUI(Patient& p,
             showMessage("Cancelled! Refund: PKR " + fToS(refund) +
                 "\nBalance: PKR " + fToS(p.getBalance()));
         }
-
-        // ── View Appointments ────────────────────────────────
         else if (choice == 2) {
             std::vector<std::string> lines;
             for (int i = 0; i < appointments.size(); i++) {
@@ -934,7 +877,6 @@ void GUI::runPatientMenuGUI(Patient& p,
             showResultsScreen("My Appointments", lines);
         }
 
-        // ── View Medical Records ─────────────────────────────
         else if (choice == 3) {
             std::vector<std::string> lines;
             for (int i = 0; i < prescriptions.size(); i++) {
@@ -952,7 +894,6 @@ void GUI::runPatientMenuGUI(Patient& p,
             showResultsScreen("Medical Records", lines);
         }
 
-        // ── View Bills ───────────────────────────────────────
         else if (choice == 4) {
             std::vector<std::string> lines;
             double total = 0;
@@ -972,8 +913,6 @@ void GUI::runPatientMenuGUI(Patient& p,
             else lines.push_back("Total unpaid: PKR " + fToS((float)total));
             showResultsScreen("My Bills", lines);
         }
-
-        // ── Pay Bill ─────────────────────────────────────────
         else if (choice == 5) {
             std::vector<std::string> lines;
             for (int i = 0; i < bills.size(); i++) {
@@ -1015,7 +954,6 @@ void GUI::runPatientMenuGUI(Patient& p,
             showMessage("Paid! Balance: PKR " + fToS(p.getBalance()));
         }
 
-        // ── Top Up Balance ───────────────────────────────────
         else if (choice == 6) {
             // loop until valid amount or cancelled
             while (m_window.isOpen()) {
@@ -1031,9 +969,6 @@ void GUI::runPatientMenuGUI(Patient& p,
     }
 }
 
-// ─────────────────────────────────────────────────────────────
-// FIX 2: DOCTOR MENU GUI
-// ─────────────────────────────────────────────────────────────
 void GUI::runDoctorMenuGUI(Doctor& d,
     Storage<Appointment>& appointments,
     Storage<Patient>& patients,
@@ -1168,7 +1103,6 @@ void GUI::runDoctorMenuGUI(Doctor& d,
         }
 
         else if (choice == 3) {
-            // loop until valid completed appointment ID or cancelled
             while (m_window.isOpen()) {
                 int appID = promptInt("Enter completed Appointment ID:");
                 if (appID < 0) break;
@@ -1253,10 +1187,6 @@ void GUI::runDoctorMenuGUI(Doctor& d,
         }
     }
 }
-
-// ─────────────────────────────────────────────────────────────
-// FIX 2: ADMIN MENU GUI
-// ─────────────────────────────────────────────────────────────
 void GUI::runAdminMenuGUI(Admin* admin,
     Storage<Patient>& patients,
     Storage<Doctor>& doctors,
