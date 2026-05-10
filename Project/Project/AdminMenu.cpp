@@ -1,7 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include "AdminMenu.h"
 
-// ── Helper ────────────────────────────────────────────────────
 void sortAppointmentsAdminDesc(Appointment* arr, int size) {
     for (int i = 0; i < size - 1; i++) {
         for (int j = 0; j < size - i - 1; j++) {
@@ -15,7 +14,7 @@ void sortAppointmentsAdminDesc(Appointment* arr, int size) {
     }
 }
 
-// ── Add Doctor ────────────────────────────────────────────────
+//add doc
 void addDoctor(Storage<Doctor>& doctors) {
 
     char name[50];
@@ -105,7 +104,7 @@ void addDoctor(Storage<Doctor>& doctors) {
     cout << "Doctor added successfully. ID: " << newID << endl;
 }
 
-// ── Remove Doctor ─────────────────────────────────────────────
+// remove doc
 void removeDoctor(Storage<Doctor>& doctors,
     Storage<Appointment>& appointments) {
 
@@ -144,7 +143,7 @@ void removeDoctor(Storage<Doctor>& doctors,
     cout << "Doctor removed successfully." << endl;
 }
 
-// ── View All Patients ─────────────────────────────────────────
+// alll patients
 void viewAllPatients(Storage<Patient>& patients,
     Storage<Bill>& bills) {
 
@@ -171,7 +170,7 @@ void viewAllPatients(Storage<Patient>& patients,
     }
 }
 
-// ── View All Doctors ──────────────────────────────────────────
+// all docs
 void viewAllDoctors(Storage<Doctor>& doctors) {
 
     if (doctors.size() == 0) {
@@ -186,7 +185,7 @@ void viewAllDoctors(Storage<Doctor>& doctors) {
     }
 }
 
-// ── View All Appointments ─────────────────────────────────────
+// all appointments
 void viewAllAppointments(Storage<Appointment>& appointments,
     Storage<Patient>& patients,
     Storage<Doctor>& doctors) {
@@ -220,8 +219,7 @@ void viewAllAppointments(Storage<Appointment>& appointments,
     }
 }
 
-// ── View Unpaid Bills ─────────────────────────────────────────
-// THIS WAS COMMENTED OUT — that was the entire error!
+// unpaid bills
 void viewUnpaidBills(Storage<Bill>& bills,
     Storage<Patient>& patients) {
 
@@ -238,7 +236,7 @@ void viewUnpaidBills(Storage<Bill>& bills,
 
         found = true;
 
-        // parse bill date YYYY-MM-DD for overdue check
+       //parsinf the bill date
         const char* d = b.getDate();
         struct tm billTm = {};
         billTm.tm_year = (d[0] - '0') * 1000 + (d[1] - '0') * 100 +
@@ -335,7 +333,7 @@ void dischargePatient(Storage<Patient>& patients,
     cout << "Patient discharged and archived successfully." << endl;
 }
 
-// ── View Security Log ─────────────────────────────────────────
+// sec log
 void viewSecurityLog() {
     ifstream fin;
     fin.open("security_log.txt");
@@ -365,7 +363,7 @@ void viewSecurityLog() {
     fin.close();
 }
 
-// ── Generate Daily Report ─────────────────────────────────────
+// generate dailt report
 void generateDailyReport(Storage<Appointment>& appointments,
     Storage<Bill>& bills,
     Storage<Patient>& patients,
