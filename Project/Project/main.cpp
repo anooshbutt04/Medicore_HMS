@@ -61,7 +61,7 @@ void runAdminMenu(Admin* admin,
     }
 }
 
-// ── helper: convert int to std::string ───────────────────────
+// helper  int to string 
 std::string intToStr(int n) {
     if (n == 0) return "0";
     std::string s = "";
@@ -131,9 +131,8 @@ int main() {
             bool gotCreds = gui.runLoginScreen(
                 roleTitle, loginID, loginPwd, errorMsg);
 
-            if (!gotCreds) break;  // clicked Back
-
-            // convert pwd to char*
+            if (!gotCreds) break;  
+            
             char pwdCStr[50];
             int pi = 0;
             for (char c : loginPwd) pwdCStr[pi++] = c;
